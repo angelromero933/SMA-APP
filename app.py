@@ -115,6 +115,29 @@ def crear_gauge_gas(valor_actual):
     fig.update_layout(margin=dict(l=20, r=20, t=80, b=20), height=300)
     return fig
 
+@st.fragment(run_every=5)
+def renderizar_tiempo_real():
+    df_ultimo_vivo = obtener_ultimo(1)
+    
+    if not df_ultimo_vivo.empty:
+        gas_vivo = float(df_ultimo_vivo["Gas-Ppm"].iloc[0])
+        temp_vivo = float(df_ultimo_vivo["Temperatura"].iloc[0])
+        hum_vivo = float(df_ultimo_vivo["Humedad"].iloc[0])
+        presion_vivo = float(df_ultimo_vivo["Presion"].iloc[0])
+        
+        fig_gas_viva = crear_gauge_gas(gas_vivo)
+        
+        col_grafico, col_metricas = st.columns([2, 1])
+        with col_grafico:
+            st.plotly_chart(fig_gas_viva, use_container_width=True, key="gauge_live")
+        with col_metricas:
+            st.markdown("### Últimas Mediciones")
+            st.metric(label="Temperatura Actual", value=f"{temp_vivo} °C")
+            st.metric(label="Humedad Relativa", value=f"{hum_vivo} %")
+            st.metric(label="Presión Atmosférica", value=f"{presion_vivo} hPa")
+    else:
+        st.warning("No hay lecturas en tiempo real disponibles.")
+
 
 def main():
     st.title("Proyecto IoT: Monitor Ambiental")
@@ -133,33 +156,7 @@ def main():
 
     with tab1:
         st.subheader("Estado actual de los sensores")
-        live_placeholder = st.empty()
-        
-        with live_placeholder.container():
-            df_ultimo_vivo = obtener_ultimo(1)
-            df_datos_vivos = obtener_segun(10)
-            
-            if not df_ultimo_vivo.empty:
-                gas_vivo = float(df_ultimo_vivo["Gas-Ppm"].iloc[0])
-                temp_vivo = float(df_ultimo_vivo["Temperatura"].iloc[0])
-                hum_vivo = float(df_ultimo_vivo["Humedad"].iloc[0])
-                presion_vivo = float(df_ultimo_vivo["Presion"].iloc[0])
-                
-                fig_gas_viva = crear_gauge_gas(gas_vivo)
-                
-                col_grafico, col_metricas = st.columns([2, 1])
-                with col_grafico:
-                    st.plotly_chart(fig_gas_viva, use_container_width=True, key="gauge_live")
-                with col_metricas:
-                    st.markdown("### Últimas Mediciones")
-                    st.metric(label="Temperatura Actual", value=f"{temp_vivo} °C")
-                    st.metric(label="Humedad Relativa", value=f"{hum_vivo} %")
-                    st.metric(label="Presión Atmosférica", value=f"{presion_vivo} hPa")
-            else:
-                st.warning("No hay lecturas en tiempo real disponibles.")
-        
-        time.sleep(30)
-        st.rerun()
+        renderizar_tiempo_real()
 
     with tab2:
         st.subheader("Evolución temporal de variables climáticas")
