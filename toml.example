@@ -1,0 +1,11 @@
+#Supabase
+[supabase]
+SUPABASE_URL="url del proyecto en supabase"
+SUPABASE_KEY="la key del proyecto"
+
+[hivemq]
+MQTT_BROKER="la url del servidor en hive mq"
+MQTT_PORT= puerto(nro)
+MQTT_USER="usuario habilitado para ecritura y lectura"
+MQTT_PASS="contraseña del usuario"
+MQTT_TOPIC="topico a escuchar"
