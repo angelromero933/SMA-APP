@@ -95,24 +95,26 @@ def obtener_ultimo(limite: int = 1):
         return pd.DataFrame()
 
 def crear_gauge_gas(valor_actual):
-    rango_completo = [0, 1]
+    """Genera un tacómetro para los niveles de Gas PPM."""
+    rango_completo = list((0, 1))
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=valor_actual,
         domain={'x': rango_completo, 'y': rango_completo},
         title={'text': "Calidad del Aire (Gas PPM)"},
         gauge={
-            'axis': {'range':, 'tickwidth': 1},
+            'axis': {'range': list((0, 1800)), 'tickwidth': 1},
             'bar': {'color': "gray"},
             'steps': [
-                {'range':, 'color': '#98fb98'},
-                {'range':, 'color': '#f4e04d'},
-                {'range':, 'color': '#fa8072'}
+                {'range': list((0, 349)), 'color': '#98fb98'},
+                {'range': list((350, 999)), 'color': '#f4e04d'},
+                {'range': list((1000, 1800)), 'color': '#fa8072'}
             ]
         }
     ))
     fig.update_layout(margin=dict(l=20, r=20, t=80, b=20), height=300)
     return fig
+
 
 def main():
     st.title("Proyecto IoT: Monitor Ambiental")
